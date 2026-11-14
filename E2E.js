@@ -23,6 +23,7 @@ export default function () {
     const res = http.post(`${BASE_URL}/api/users`, JSON.stringify(body), headers);
 
     check(res => {
-
+        res.status == 201 || "Login failed",
+            res.body.includes(USERNAME) || "Login failed"
     })
 }

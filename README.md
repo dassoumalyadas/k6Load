@@ -22,3 +22,4 @@ k6 run test1.js
 k6 run test2.js
 k6 run E2E.js
 ```
+
