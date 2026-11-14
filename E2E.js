@@ -78,10 +78,10 @@ export default function () {
         })
         sleep(1);
         if (ifUserAuthenticated) {
-            console.log("Authentication Successfully", res.status, res.body);
+            console.log("Authentication Successfully", USERNAME, res.status, res.body);
             token = res.json('token');
         } else {
-            console.error("Authentication Failed", res.status, res.body);
+            console.error("Authentication Failed", USERNAME, res.status, res.body);
         }
 
     })
