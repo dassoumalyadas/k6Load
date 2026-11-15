@@ -1,10 +1,12 @@
 import { check, sleep } from 'k6';
 import http from 'k6/http'
 import { group } from 'k6';
+import { Counter } from 'k6/metrics';
 
 const BASE_URL = "https://quickpizza.grafana.com";
 let USERNAME;
 const PASSWORD = String(Math.random() * 1000000);
+const successfulOrders = new Counter('successful_orders');
 
 export const options = {
     stages: [
@@ -16,7 +18,8 @@ export const options = {
     thresholds: {
         "checks": ['rate>0.99'],
         'http_req_duration': ['p(95)< 350'],
-        'iteration_duration': ['p(95)<8000']
+        'iteration_duration': ['p(95)<8000'],
+        'successful_orders': ['count>=2']
 
     }
 }
@@ -122,6 +125,7 @@ export default function () {
             "pizza has order id": (r) => r.json("pizza.id") !== undefined,
             "pizza has name": (r) => r.json("pizza.name") !== undefined,
             "pizza has custom name": (r) => r.json("pizza.name") === 'My Custom Pizza'
+
         });
 
         sleep(1);
@@ -130,6 +134,7 @@ export default function () {
             console.log("Order Created Successfully", orderResp.status, orderResp.body);
             orderId = orderResp.json("pizza.id");
             console.log("Order Id is", orderId);
+            successfulOrders.add(1);
         } else {
             console.error("Order Creation Failed", orderResp.status, orderResp.body);
         }
